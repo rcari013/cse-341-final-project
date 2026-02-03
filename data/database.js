@@ -1,25 +1,27 @@
-const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+dotenv.config();
+
+const { MongoClient } = require('mongodb');
 
 let database;
 
-// Initialize the database connection
+/**
+ * Initialize the database connection
+ */
 const initDb = (callback) => {
   if (database) {
-    console.log('Db is already initialized!');
+    console.log('Database is already initialized!');
     return callback(null, database);
   }
 
-  const uri = process.env.MONGODB_URI;
-
-  if (!uri) {
-    throw new Error('MONGODB_URI is not defined');
+  if (!process.env.MONGODB_URL) {
+    return callback(new Error('MONGODB_URL is not defined in the environment variables'));
   }
 
-  mongoose
-    .connect(uri)
-    .then((conn) => {
-      database = conn.connection;
-      console.log('MongoDB connected');
+  MongoClient.connect(process.env.MONGODB_URL)
+    .then((client) => {
+      database = client.db(); // obtiene la base de datos por defecto de la URI
+      console.log('Database connected successfully');
       callback(null, database);
     })
     .catch((err) => {
@@ -27,7 +29,9 @@ const initDb = (callback) => {
     });
 };
 
-// Get the database instance
+/**
+ * Get the database instance
+ */
 const getDatabase = () => {
   if (!database) {
     throw Error('Database not initialized');

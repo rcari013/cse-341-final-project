@@ -33,12 +33,29 @@ app
   })
   .use(cors({ methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH'] }))
   .use(cors({ origin: '*' }))
+
+  // Swagger route
+  .use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
+
+  // Main routes
   .use('/', require('./routes'));
 
 app.get('/', (req, res) => {
   res.send('API is running');
 });
 
+app.get(
+  '/github/callback',
+  passport.authenticate('github', {
+    failureRedirect: '/api-docs',
+    session: false
+  }),
+  (req, res) => {
+    req.session.user = req.user;
+    res.redirect('/');
+  }
+);
+/*
 // Initialize database and start server
 mongodb.initDb((err) => {
   if (err) {
