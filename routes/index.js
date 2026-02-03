@@ -1,8 +1,7 @@
 const passport = require('passport');
-
 const router = require('express').Router();
 
-// ADD YOUR ROUTES HERE
+router.use('/', require('./swagger'));
 
 router.get('/login', passport.authenticate('github'), (req, res) => {});
 
@@ -12,6 +11,5 @@ router.get('/logout', (req, res, next) => {
     res.redirect('/');
   });
 });
-
 
 module.exports = router;

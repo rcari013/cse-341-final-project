@@ -35,13 +35,12 @@ importers:
       passport-github2:
         specifier: ^0.1.12
         version: 0.1.12
-      swagger-ui-express:
-        specifier: ^5.0.1
-        version: 5.0.1(express@5.2.1)
-    devDependencies:
       swagger-autogen:
         specifier: ^2.23.7
         version: 2.23.7
+      swagger-ui-express:
+        specifier: ^5.0.1
+        version: 5.0.1(express@5.2.1)
 
 packages:
 
