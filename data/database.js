@@ -1,22 +1,25 @@
-const dotenv = require('dotenv');
 const mongoose = require('mongoose');
-
-// Load environment variables from .env file
-dotenv.config();
 
 let database;
 
 // Initialize the database connection
 const initDb = (callback) => {
-  // If database is already initialized, return it
   if (database) {
     console.log('Db is already initialized!');
     return callback(null, database);
   }
 
-  mongoose.connect(process.env.MONGODB_URL)
+  const uri = process.env.MONGODB_URI;
+
+  if (!uri) {
+    throw new Error('MONGODB_URI is not defined');
+  }
+
+  mongoose
+    .connect(uri)
     .then((conn) => {
       database = conn.connection;
+      console.log('MongoDB connected');
       callback(null, database);
     })
     .catch((err) => {
@@ -32,7 +35,6 @@ const getDatabase = () => {
   return database;
 };
 
-// Export the initDb and getDatabase functions
 module.exports = {
   initDb,
   getDatabase
