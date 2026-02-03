@@ -14,13 +14,15 @@ const initDb = (callback) => {
     return callback(null, database);
   }
 
-  if (!process.env.MONGODB_URL) {
-    return callback(new Error('MONGODB_URL is not defined in the environment variables'));
+  if (!process.env.MONGODB_URI) {
+    return callback(
+      new Error('MONGODB_URI is not defined in the environment variables')
+    );
   }
 
-  MongoClient.connect(process.env.MONGODB_URL)
+  MongoClient.connect(process.env.MONGODB_URI)
     .then((client) => {
-      database = client.db(); // obtiene la base de datos por defecto de la URI
+      database = client.db(); // uses DB from URI
       console.log('Database connected successfully');
       callback(null, database);
     })
