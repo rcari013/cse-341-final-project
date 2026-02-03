@@ -4,12 +4,17 @@ const express = require('express');
 const mongodb = require('./data/database');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger/swagger.json');
 
 // Initialize Express app
 const app = express();
 
 // Set the port (Render will inject PORT)
 const port = process.env.PORT || 3000;
+
+// Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Middleware
 app
