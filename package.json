@@ -1,16 +1,15 @@
 {
   "name": "cse341-employees",
   "version": "1.0.0",
-  "description": "",
+  "description": "Employee Management API for BYU CSE 341",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "swagger": "node swagger.js",
     "dev": "node index.js"
   },
-  "keywords": [],
-  "author": "Denton Flake",
+  "author": "Bryan Santana, Denton Flake",
   "license": "ISC",
-  "packageManager": "pnpm@10.15.1",
   "dependencies": {
     "body-parser": "^2.2.2",
     "cors": "^2.8.6",
