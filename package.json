@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node swagger/swagger.js && node index.js"
+    "start": "node index.js",
+    "dev": "node index.js"
   },
   "keywords": [],
   "author": "Denton Flake",
