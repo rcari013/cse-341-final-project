@@ -1,44 +1,32 @@
+require('dotenv').config();
+
 const express = require('express');
 const mongodb = require('./data/database');
 const bodyParser = require('body-parser');
-
 const cors = require('cors');
-
-const dotenv = require('dotenv');
-dotenv.config();
 
 // Initialize Express app
 const app = express();
 
-// Set the port
+// Set the port (Render will inject PORT)
 const port = process.env.PORT || 3000;
 
-// Middleware to parse JSON bodies
+// Middleware
 app
-
   .use(bodyParser.json())
-  // CORS Middleware
   .use((req, res, next) => {
-
-    res.setHeader(
-      'Access-Control-Allow-Origin',
-      '*'
-    );
-
+    res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader(
       'Access-Control-Allow-Headers',
       'Origin, X-Requested-With, Content-Type, Accept, Z-Key'
     );
-
     res.setHeader(
       'Access-Control-Allow-Methods',
       'GET, POST, PUT, DELETE, OPTIONS'
     );
-
     next();
   })
-
-  .use(cors(({ methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH'] })))
+  .use(cors({ methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH'] }))
   .use(cors({ origin: '*' }))
   .use('/', require('./routes'));
 
@@ -49,8 +37,10 @@ app.get('/', (req, res) => {
 // Initialize database and start server
 mongodb.initDb((err) => {
   if (err) {
-    console.log(err);
+    console.error(err);
   } else {
-    app.listen(port, () => console.log(`Database is listening and node is running on port http://localhost:${port}`));
+    app.listen(port, () =>
+      console.log(`Server running on port ${port}`)
+    );
   }
 });
