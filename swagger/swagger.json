@@ -1,266 +1,188 @@
 {
-  "openapi": "3.0.0",
+  "swagger": "2.0",
   "info": {
-    "title": "Vehicle Car Appointment API",
-    "description": "API for managing vehicles and service types",
+    "title": "Vehicle Management API",
+    "description": "Documentation for the Vehicle Management API",
     "version": "1.0.0"
   },
-  "servers": [
-    {
-      "url": "http://localhost:3000",
-      "description": "Local server"
-    },
-    {
-      "url": "https://your-render-app.onrender.com",
-      "description": "Production server"
-    }
+  "host": "cse-341-final-project-1t9z.onrender.com",
+  "basePath": "/",
+  "schemes": [
+    "https"
   ],
   "paths": {
-    "/vehicles": {
+    "/documentation": {
       "get": {
-        "summary": "Get all vehicles",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/vehicle/": {
+      "get": {
+        "tags": [
+          "Vehicle"
+        ],
+        "description": "",
         "responses": {
           "200": {
-            "description": "List of vehicles"
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       },
       "post": {
-        "summary": "Create a new vehicle",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Vehicle"
+        "tags": [
+          "Vehicle"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "make": {
+                  "example": "any"
+                },
+                "model": {
+                  "example": "any"
+                },
+                "year": {
+                  "example": "any"
+                },
+                "vin": {
+                  "example": "any"
+                }
               }
             }
           }
-        },
+        ],
         "responses": {
           "201": {
-            "description": "Vehicle created"
+            "description": "Created"
           },
-          "400": {
-            "description": "Validation error"
+          "422": {
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
     },
-    "/vehicles/{id}": {
+    "/vehicle/{id}": {
       "get": {
-        "summary": "Get vehicle by ID",
+        "tags": [
+          "Vehicle"
+        ],
+        "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "type": "string"
           }
         ],
         "responses": {
           "200": {
-            "description": "Vehicle found"
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
           },
           "404": {
-            "description": "Vehicle not found"
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       },
       "put": {
-        "summary": "Update vehicle",
+        "tags": [
+          "Vehicle"
+        ],
+        "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Vehicle"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Vehicle updated"
+            "type": "string"
           },
-          "404": {
-            "description": "Vehicle not found"
-          }
-        }
-      },
-      "delete": {
-        "summary": "Delete vehicle",
-        "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
+            "name": "body",
+            "in": "body",
             "schema": {
-              "type": "string"
+              "type": "object",
+              "properties": {
+                "make": {
+                  "example": "any"
+                },
+                "model": {
+                  "example": "any"
+                },
+                "year": {
+                  "example": "any"
+                },
+                "vin": {
+                  "example": "any"
+                }
+              }
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Vehicle deleted"
-          },
-          "404": {
-            "description": "Vehicle not found"
-          }
-        }
-      }
-    },
-    "/services": {
-      "get": {
-        "summary": "Get all services",
-        "responses": {
-          "200": {
-            "description": "List of services"
-          }
-        }
-      },
-      "post": {
-        "summary": "Create a new service",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Service"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Service created"
+            "description": "OK"
           },
           "400": {
-            "description": "Validation error"
-          }
-        }
-      }
-    },
-    "/services/{id}": {
-      "get": {
-        "summary": "Get service by ID",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Service found"
+            "description": "Bad Request"
           },
           "404": {
-            "description": "Service not found"
-          }
-        }
-      },
-      "put": {
-        "summary": "Update service",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Service"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Service updated"
+            "description": "Not Found"
           },
-          "404": {
-            "description": "Service not found"
+          "422": {
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       },
       "delete": {
-        "summary": "Delete service",
+        "tags": [
+          "Vehicle"
+        ],
+        "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "type": "string"
           }
         ],
         "responses": {
           "200": {
-            "description": "Service deleted"
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
           },
           "404": {
-            "description": "Service not found"
-          }
-        }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "Vehicle": {
-        "type": "object",
-        "required": ["userId", "make", "model", "year"],
-        "properties": {
-          "userId": {
-            "type": "string"
+            "description": "Not Found"
           },
-          "make": {
-            "type": "string"
-          },
-          "model": {
-            "type": "string"
-          },
-          "year": {
-            "type": "number"
-          }
-        }
-      },
-      "Service": {
-        "type": "object",
-        "required": ["name", "durationMinutes"],
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "durationMinutes": {
-            "type": "number"
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
