@@ -2,188 +2,240 @@
   "swagger": "2.0",
   "info": {
     "title": "Vehicle Management API",
-    "description": "Documentation for the Vehicle Management API",
+    "description": "Documentation for the Vehicle and Service Management API",
     "version": "1.0.0"
   },
-  "host": "cse-341-final-project-1t9z.onrender.com",
   "basePath": "/",
-  "schemes": [
-    "https"
-  ],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+
   "paths": {
-    "/documentation": {
+    "/vehicles": {
       "get": {
-        "description": "",
+        "tags": ["Vehicle"],
+        "summary": "Get all vehicles",
         "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/vehicle/": {
-      "get": {
-        "tags": [
-          "Vehicle"
-        ],
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "200": { "description": "List of vehicles" },
+          "500": { "description": "Internal Server Error" }
         }
       },
       "post": {
-        "tags": [
-          "Vehicle"
-        ],
-        "description": "",
+        "tags": ["Vehicle"],
+        "summary": "Create a new vehicle",
         "parameters": [
           {
             "name": "body",
             "in": "body",
+            "required": true,
             "schema": {
               "type": "object",
+              "required": ["make", "model", "year", "vin"],
               "properties": {
-                "make": {
-                  "example": "any"
-                },
-                "model": {
-                  "example": "any"
-                },
+                "make": { "type": "string", "example": "Toyota" },
+                "model": { "type": "string", "example": "Corolla" },
                 "year": {
-                  "example": "any"
+                  "type": "number",
+                  "minimum": 1886,
+                  "example": 2020
                 },
                 "vin": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "1HGCM82633A004352"
+                },
+                "color": { "type": "string", "example": "White" },
+                "licensePlate": { "type": "string", "example": "ABC-1234" },
+                "fuelType": {
+                  "type": "string",
+                  "enum": ["Gasoline", "Diesel", "Hybrid", "Electric"],
+                  "example": "Gasoline"
                 }
               }
             }
           }
         ],
         "responses": {
-          "201": {
-            "description": "Created"
-          },
-          "422": {
-            "description": "Unprocessable Entity"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "201": { "description": "Vehicle created" },
+          "400": { "description": "Validation error or invalid input" },
+          "409": { "description": "Duplicate key error" },
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
-    "/vehicle/{id}": {
+
+    "/vehicles/{id}": {
       "get": {
-        "tags": [
-          "Vehicle"
-        ],
-        "description": "",
+        "tags": ["Vehicle"],
+        "summary": "Get vehicle by ID",
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
+          { "name": "id", "in": "path", "required": true, "type": "string" }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "200": { "description": "Vehicle found" },
+          "400": { "description": "Invalid ID format" },
+          "404": { "description": "Vehicle not found" },
+          "500": { "description": "Internal Server Error" }
         }
       },
       "put": {
-        "tags": [
-          "Vehicle"
-        ],
-        "description": "",
+        "tags": ["Vehicle"],
+        "summary": "Update a vehicle",
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
+          { "name": "id", "in": "path", "required": true, "type": "string" },
           {
             "name": "body",
             "in": "body",
+            "required": true,
             "schema": {
               "type": "object",
               "properties": {
-                "make": {
-                  "example": "any"
-                },
-                "model": {
-                  "example": "any"
-                },
-                "year": {
-                  "example": "any"
-                },
-                "vin": {
-                  "example": "any"
+                "make": { "type": "string" },
+                "model": { "type": "string" },
+                "year": { "type": "number", "minimum": 1886 },
+                "vin": { "type": "string" },
+                "color": { "type": "string" },
+                "licensePlate": { "type": "string" },
+                "fuelType": {
+                  "type": "string",
+                  "enum": ["Gasoline", "Diesel", "Hybrid", "Electric"]
                 }
               }
             }
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "422": {
-            "description": "Unprocessable Entity"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "200": { "description": "Vehicle updated" },
+          "400": { "description": "Validation error or invalid ID" },
+          "404": { "description": "Vehicle not found" },
+          "409": { "description": "Duplicate key error" },
+          "500": { "description": "Internal Server Error" }
         }
       },
       "delete": {
-        "tags": [
-          "Vehicle"
+        "tags": ["Vehicle"],
+        "summary": "Delete a vehicle",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string" }
         ],
-        "description": "",
+        "responses": {
+          "200": { "description": "Vehicle deleted" },
+          "400": { "description": "Invalid ID format" },
+          "404": { "description": "Vehicle not found" },
+          "500": { "description": "Internal Server Error" }
+        }
+      }
+    },
+
+    "/services": {
+      "get": {
+        "tags": ["Service"],
+        "summary": "Get all services",
+        "responses": {
+          "200": { "description": "List of services" },
+          "500": { "description": "Internal Server Error" }
+        }
+      },
+      "post": {
+        "tags": ["Service"],
+        "summary": "Create a new service",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
+            "name": "body",
+            "in": "body",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "object",
+              "required": ["name", "durationMinutes", "price"],
+              "properties": {
+                "name": { "type": "string", "example": "Oil Change" },
+                "description": {
+                  "type": "string",
+                  "example": "Basic engine oil replacement"
+                },
+                "durationMinutes": {
+                  "type": "number",
+                  "minimum": 1,
+                  "example": 30
+                },
+                "price": {
+                  "type": "number",
+                  "minimum": 0,
+                  "example": 49.99
+                },
+                "isActive": { "type": "boolean", "example": true },
+                "category": { "type": "string", "example": "Maintenance" },
+                "requiresAppointment": {
+                  "type": "boolean",
+                  "example": true
+                }
+              }
+            }
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
+          "201": { "description": "Service created" },
+          "400": { "description": "Validation error or invalid input" },
+          "409": { "description": "Duplicate key error" },
+          "500": { "description": "Internal Server Error" }
+        }
+      }
+    },
+
+    "/services/{id}": {
+      "get": {
+        "tags": ["Service"],
+        "summary": "Get service by ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string" }
+        ],
+        "responses": {
+          "200": { "description": "Service found" },
+          "400": { "description": "Invalid ID format" },
+          "404": { "description": "Service not found" },
+          "500": { "description": "Internal Server Error" }
+        }
+      },
+      "put": {
+        "tags": ["Service"],
+        "summary": "Update a service",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string" },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "description": { "type": "string" },
+                "durationMinutes": { "type": "number", "minimum": 1 },
+                "price": { "type": "number", "minimum": 0 },
+                "isActive": { "type": "boolean" },
+                "category": { "type": "string" },
+                "requiresAppointment": { "type": "boolean" }
+              }
+            }
           }
+        ],
+        "responses": {
+          "200": { "description": "Service updated" },
+          "400": { "description": "Validation error or invalid ID" },
+          "404": { "description": "Service not found" },
+          "409": { "description": "Duplicate key error" },
+          "500": { "description": "Internal Server Error" }
+        }
+      },
+      "delete": {
+        "tags": ["Service"],
+        "summary": "Delete a service",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string" }
+        ],
+        "responses": {
+          "200": { "description": "Service deleted" },
+          "400": { "description": "Invalid ID format" },
+          "404": { "description": "Service not found" },
+          "500": { "description": "Internal Server Error" }
         }
       }
     }

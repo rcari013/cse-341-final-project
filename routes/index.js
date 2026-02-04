@@ -1,10 +1,9 @@
 const router = require('express').Router();
 
-// Routes
-router.use('/', require('./swagger'));
-// router.use('/auth', require('./auth'));
-router.use('/vehicle', require('./vehicle'));
-// router.use('/service', require('./service'));
-// router.use('/booking', require('./booking'));
+// Vehicle routes
+router.use('/vehicles', require('./vehicles'));
+
+// Service routes
+router.use('/services', require('./services'));
 
 module.exports = router;

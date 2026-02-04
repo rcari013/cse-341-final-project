@@ -1,11 +1,17 @@
+const mongoose = require('mongoose');
 require('dotenv').config();
 
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(() => console.log('Mongoose connected to MongoDB'))
+  .catch((err) => console.error('Mongoose connection error:', err));
+
 const express = require('express');
-const mongodb = require('./data/database');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger/swagger.json');
+const { errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -32,17 +38,13 @@ app
   .use(cors({ origin: '*' }))
   .use('/', require('./routes'));
 
+// Root check
 app.get('/', (req, res) => {
   res.send('API is running');
 });
 
-// Initialize database and start server
-mongodb.initDb((err) => {
-  if (err) {
-    console.error(err);
-  } else {
-    app.listen(port, () =>
-      console.log(`Server running on port ${port}`)
-    );
-  }
+app.use(errorHandler);
+
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });

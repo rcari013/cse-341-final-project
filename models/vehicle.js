@@ -20,12 +20,26 @@ const vehicleSchema = new mongoose.Schema(
     vin: {
       type: String,
       required: true,
+      trim: true,
+      unique: true
+    },
+    color: {
+      type: String,
       trim: true
+    },
+    licensePlate: {
+      type: String,
+      trim: true
+    },
+    fuelType: {
+      type: String,
+      enum: ['Gasoline', 'Diesel', 'Hybrid', 'Electric'],
+      default: 'Gasoline'
     }
   },
   {
-    timestamps: true,
-    collection: 'vehicle'
+    collection: 'vehicles',
+    versionKey: false
   }
 );
 
