@@ -12,7 +12,7 @@
   "paths": {
     "/vehicles": {
       "get": {
-        "tags": ["Vehicle"],
+        "tags": ["Vehicles"],
         "summary": "Get all vehicles",
         "responses": {
           "200": { "description": "List of vehicles" },
@@ -20,7 +20,7 @@
         }
       },
       "post": {
-        "tags": ["Vehicle"],
+        "tags": ["Vehicles"],
         "summary": "Create a new vehicle",
         "parameters": [
           {
@@ -64,7 +64,7 @@
 
     "/vehicles/{id}": {
       "get": {
-        "tags": ["Vehicle"],
+        "tags": ["Vehicles"],
         "summary": "Get vehicle by ID",
         "parameters": [
           { "name": "id", "in": "path", "required": true, "type": "string" }
@@ -77,7 +77,7 @@
         }
       },
       "put": {
-        "tags": ["Vehicle"],
+        "tags": ["Vehicles"],
         "summary": "Update a vehicle",
         "parameters": [
           { "name": "id", "in": "path", "required": true, "type": "string" },
@@ -111,7 +111,7 @@
         }
       },
       "delete": {
-        "tags": ["Vehicle"],
+        "tags": ["Vehicles"],
         "summary": "Delete a vehicle",
         "parameters": [
           { "name": "id", "in": "path", "required": true, "type": "string" }
@@ -127,7 +127,7 @@
 
     "/services": {
       "get": {
-        "tags": ["Service"],
+        "tags": ["Services"],
         "summary": "Get all services",
         "responses": {
           "200": { "description": "List of services" },
@@ -135,7 +135,7 @@
         }
       },
       "post": {
-        "tags": ["Service"],
+        "tags": ["Services"],
         "summary": "Create a new service",
         "parameters": [
           {
@@ -182,7 +182,7 @@
 
     "/services/{id}": {
       "get": {
-        "tags": ["Service"],
+        "tags": ["Services"],
         "summary": "Get service by ID",
         "parameters": [
           { "name": "id", "in": "path", "required": true, "type": "string" }
@@ -195,7 +195,7 @@
         }
       },
       "put": {
-        "tags": ["Service"],
+        "tags": ["Services"],
         "summary": "Update a service",
         "parameters": [
           { "name": "id", "in": "path", "required": true, "type": "string" },
@@ -226,7 +226,7 @@
         }
       },
       "delete": {
-        "tags": ["Service"],
+        "tags": ["Services"],
         "summary": "Delete a service",
         "parameters": [
           { "name": "id", "in": "path", "required": true, "type": "string" }
