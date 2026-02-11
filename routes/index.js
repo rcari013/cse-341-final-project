@@ -6,6 +6,9 @@ const router = require('express').Router();
 
 router.use('/vehicles', require('./vehicles'));
 router.use('/services', require('./services'));
+router.use('/users', require('./users'));
+router.use('/bookings', require('./bookings'));
+
 
 router.get('/login', passport.authenticate('github'), (req, res) => {});
 

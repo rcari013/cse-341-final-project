@@ -1,269 +1,409 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Vehicle Car Appointment API",
-    "description": "API for managing vehicles and service types",
+    "title": "Vehicle Service Booking API",
+    "description": "API for managing users, vehicles, services and bookings",
     "version": "1.0.0"
   },
   "servers": [
     {
       "url": "http://localhost:3000",
-      "description": "Local server"
-    },
-    {
-      "url": "https://your-render-app.onrender.com",
-      "description": "Production server"
+      "description": "Local Server"
     }
   ],
   "paths": {
-    "/vehicles": {
+
+    "/users": {
       "get": {
-        "summary": "Get all vehicles",
+        "tags": ["Users"],
+        "summary": "Get all users",
         "responses": {
-          "200": {
-            "description": "List of vehicles"
-          }
+          "200": { "description": "Users retrieved successfully" }
         }
       },
       "post": {
-        "summary": "Create a new vehicle",
+        "tags": ["Users"],
+        "summary": "Create a new user",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Vehicle"
-              }
+              "schema": { "$ref": "#/components/schemas/User" }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "Vehicle created"
-          },
-          "400": {
-            "description": "Validation error"
-          }
+          "201": { "description": "User created successfully" },
+          "400": { "description": "Validation error" }
         }
       }
     },
+
+    "/users/{id}": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get user by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "User found" },
+          "404": { "description": "User not found" }
+        }
+      },
+      "put": {
+        "tags": ["Users"],
+        "summary": "Update user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/User" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "User updated" },
+          "400": { "description": "Validation error" },
+          "404": { "description": "User not found" }
+        }
+      },
+      "delete": {
+        "tags": ["Users"],
+        "summary": "Delete user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "User deleted" },
+          "404": { "description": "User not found" }
+        }
+      }
+    },
+
+    "/vehicles": {
+      "get": {
+        "tags": ["Vehicles"],
+        "summary": "Get all vehicles",
+        "responses": {
+          "200": { "description": "Vehicles retrieved successfully" }
+        }
+      },
+      "post": {
+        "tags": ["Vehicles"],
+        "summary": "Create vehicle",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Vehicle" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Vehicle created" },
+          "400": { "description": "Validation error" }
+        }
+      }
+    },
+
     "/vehicles/{id}": {
       "get": {
+        "tags": ["Vehicles"],
         "summary": "Get vehicle by ID",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
-          "200": {
-            "description": "Vehicle found"
-          },
-          "404": {
-            "description": "Vehicle not found"
-          }
+          "200": { "description": "Vehicle found" },
+          "404": { "description": "Vehicle not found" }
         }
       },
       "put": {
+        "tags": ["Vehicles"],
         "summary": "Update vehicle",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Vehicle"
-              }
+              "schema": { "$ref": "#/components/schemas/Vehicle" }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Vehicle updated"
-          },
-          "404": {
-            "description": "Vehicle not found"
-          }
+          "200": { "description": "Vehicle updated" },
+          "400": { "description": "Validation error" },
+          "404": { "description": "Vehicle not found" }
         }
       },
       "delete": {
+        "tags": ["Vehicles"],
         "summary": "Delete vehicle",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
-          "200": {
-            "description": "Vehicle deleted"
-          },
-          "404": {
-            "description": "Vehicle not found"
-          }
+          "200": { "description": "Vehicle deleted" },
+          "404": { "description": "Vehicle not found" }
         }
       }
     },
+
     "/services": {
       "get": {
+        "tags": ["Services"],
         "summary": "Get all services",
         "responses": {
-          "200": {
-            "description": "List of services"
-          }
+          "200": { "description": "Services retrieved successfully" }
         }
       },
       "post": {
-        "summary": "Create a new service",
+        "tags": ["Services"],
+        "summary": "Create service",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Service"
-              }
+              "schema": { "$ref": "#/components/schemas/Service" }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "Service created"
-          },
-          "400": {
-            "description": "Validation error"
-          }
+          "201": { "description": "Service created" },
+          "400": { "description": "Validation error" }
         }
       }
     },
+
     "/services/{id}": {
       "get": {
+        "tags": ["Services"],
         "summary": "Get service by ID",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
-          "200": {
-            "description": "Service found"
-          },
-          "404": {
-            "description": "Service not found"
-          }
+          "200": { "description": "Service found" },
+          "404": { "description": "Service not found" }
         }
       },
       "put": {
+        "tags": ["Services"],
         "summary": "Update service",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Service"
-              }
+              "schema": { "$ref": "#/components/schemas/Service" }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Service updated"
-          },
-          "404": {
-            "description": "Service not found"
-          }
+          "200": { "description": "Service updated" },
+          "400": { "description": "Validation error" },
+          "404": { "description": "Service not found" }
         }
       },
       "delete": {
+        "tags": ["Services"],
         "summary": "Delete service",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
-          "200": {
-            "description": "Service deleted"
-          },
-          "404": {
-            "description": "Service not found"
+          "200": { "description": "Service deleted" },
+          "404": { "description": "Service not found" }
+        }
+      }
+    },
+
+    "/bookings": {
+      "get": {
+        "tags": ["Bookings"],
+        "summary": "Get all bookings",
+        "responses": {
+          "200": { "description": "Bookings retrieved successfully" }
+        }
+      },
+      "post": {
+        "tags": ["Bookings"],
+        "summary": "Create booking",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Booking" }
+            }
           }
+        },
+        "responses": {
+          "201": { "description": "Booking created" },
+          "400": { "description": "Validation error" }
+        }
+      }
+    },
+
+    "/bookings/{id}": {
+      "get": {
+        "tags": ["Bookings"],
+        "summary": "Get booking by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Booking found" },
+          "404": { "description": "Booking not found" }
+        }
+      },
+      "put": {
+        "tags": ["Bookings"],
+        "summary": "Update booking",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Booking" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Booking updated" },
+          "400": { "description": "Validation error" },
+          "404": { "description": "Booking not found" }
+        }
+      },
+      "delete": {
+        "tags": ["Bookings"],
+        "summary": "Delete booking",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Booking deleted" },
+          "404": { "description": "Booking not found" }
         }
       }
     }
+
   },
+
   "components": {
     "schemas": {
+
+      "User": {
+        "type": "object",
+        "required": ["name", "email"],
+        "properties": {
+          "name": { "type": "string", "example": "Esteban Spitale" },
+          "email": { "type": "string", "example": "esteban@email.com" },
+          "phone": { "type": "string", "example": "123456789" }
+        }
+      },
+
       "Vehicle": {
         "type": "object",
         "required": ["userId", "make", "model", "year"],
         "properties": {
-          "userId": {
-            "type": "string"
-          },
-          "make": {
-            "type": "string"
-          },
-          "model": {
-            "type": "string"
-          },
-          "year": {
-            "type": "number"
-          }
+          "userId": { "type": "string", "example": "65fa123abc" },
+          "make": { "type": "string", "example": "Toyota" },
+          "model": { "type": "string", "example": "Corolla" },
+          "year": { "type": "integer", "example": 2022 }
         }
       },
+
       "Service": {
         "type": "object",
         "required": ["name", "durationMinutes"],
         "properties": {
-          "name": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "durationMinutes": {
-            "type": "number"
-          }
+          "name": { "type": "string", "example": "Oil Change" },
+          "description": { "type": "string", "example": "Full synthetic oil change" },
+          "durationMinutes": { "type": "integer", "example": 45 }
+        }
+      },
+
+      "Booking": {
+        "type": "object",
+        "required": ["userId", "vehicleId", "serviceId", "date"],
+        "properties": {
+          "userId": { "type": "string", "example": "65fa123abc" },
+          "vehicleId": { "type": "string", "example": "65fa999abc" },
+          "serviceId": { "type": "string", "example": "65fa777abc" },
+          "date": { "type": "string", "format": "date-time", "example": "2026-03-15T10:00:00Z" }
         }
       }
+
     }
   }
 }
