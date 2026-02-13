@@ -15,9 +15,28 @@ const serviceSchema = new mongoose.Schema(
       type: Number,
       required: true,
       min: 1
+    },
+    price: {
+      type: Number,
+      required: true,
+      min: 0
+    },
+    isActive: {
+      type: Boolean,
+      default: true
+    },
+    category: {
+      type: String,
+      trim: true
+    },
+    requiresAppointment: {
+      type: Boolean,
+      default: true
     }
   },
-  { timestamps: true }
+  {
+    versionKey: false
+  }
 );
 
 module.exports = mongoose.model("Service", serviceSchema);

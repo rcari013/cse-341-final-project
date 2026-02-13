@@ -1,36 +1,27 @@
+const mongoose = require('mongoose');
+require('dotenv').config();
+
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(() => console.log('Mongoose connected to MongoDB'))
+  .catch((err) => console.error('Mongoose connection error:', err));
+
 const express = require('express');
-const mongodb = require('./data/database');
 const bodyParser = require('body-parser');
-
-const passport = require('passport');
-const session = require('express-session');
-const GithubStrategy = require('passport-github2').Strategy;
 const cors = require('cors');
-
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger/swagger.json');
+const { errorHandler } = require('./middleware/errorHandler');
 
-const dotenv = require('dotenv');
-dotenv.config();
-
-// Initialize Express app
 const app = express();
-
-// Set the port
 const port = process.env.PORT || 3000;
+
+// Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Middleware
 app
   .use(bodyParser.json())
-  .use(session({
-    secret: 'secret',
-    resave: false,
-    saveUninitialized: true
-  }))
-  .use(passport.initialize())
-  .use(passport.session())
-
-  // CORS Middleware
   .use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader(
@@ -43,71 +34,17 @@ app
     );
     next();
   })
-
+  .use(cors({ methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH'] }))
   .use(cors({ origin: '*' }))
-
-  // Swagger route
-  .use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
-
-  // Main routes
   .use('/', require('./routes'));
 
-// Passport GitHub Strategy
-passport.use(
-  new GithubStrategy(
-    {
-      clientID: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      callbackURL: process.env.GITHUB_CALLBACK_URL
-    },
-    function (accessToken, refreshToken, profile, done) {
-      return done(null, profile);
-    }
-  )
-);
-
-passport.serializeUser(function (user, done) {
-  done(null, user);
-});
-
-passport.deserializeUser(function (obj, done) {
-  done(null, obj);
-});
-
-// Test route
+// Root check
 app.get('/', (req, res) => {
-  res.send(
-    req.session.user !== undefined
-      ? `Logged in as ${req.session.user.displayName}`
-      : 'Logged out'
-  );
+  res.send('API is running');
 });
 
-app.get(
-  '/github/callback',
-  passport.authenticate('github', {
-    failureRedirect: '/api-docs',
-    session: false
-  }),
-  (req, res) => {
-    req.session.user = req.user;
-    res.redirect('/');
-  }
-);
-/*
-// Initialize database and start server
-mongodb.initDb((err) => {
-  if (err) {
-    console.log(err);
-  } else {
-    app.listen(port, () => {
-      console.log(
-        `Database connected and server running at http://localhost:${port}`
-      );
-    });
-  }
-});
-*/
+app.use(errorHandler);
+
 app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+  console.log(`Server running on port ${port}`);
 });
