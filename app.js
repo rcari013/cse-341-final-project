@@ -1,4 +1,3 @@
-// app.js
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -12,13 +11,15 @@ const { errorHandler } = require("./middleware/errorHandler");
 
 const app = express();
 
-// Swagger UI
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+if (process.env.NODE_ENV === "production") {
+  app.set("trust proxy", 1);
+}
 
 // Body
 app.use(bodyParser.json());
 
-// CORS
+
 app.use(
   cors({
     origin: process.env.CLIENT_ORIGIN || true,
@@ -28,7 +29,7 @@ app.use(
   })
 );
 
-// Sessions
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "dev_secret_change_me",
@@ -37,7 +38,7 @@ app.use(
     cookie: {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      sameSite: "lax",
     },
   })
 );
@@ -47,19 +48,13 @@ configurePassport();
 app.use(passport.initialize());
 app.use(passport.session());
 
-// ✅ Test login shim (must be before routes that check req.isAuthenticated)
-if (process.env.NODE_ENV === "test") {
-  app.use((req, res, next) => {
-    if (req.headers["x-test-auth"] === "1") {
-      req.isAuthenticated = () => true;
-      req.user = { username: "testuser" };
-    }
-    next();
-  });
-}
+// Swagger UI (PUBLIC)
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 
-// Root check
+app.use("/auth", require("./routes/auth"));
+
+// Root check (PUBLIC)
 app.get("/", (req, res) => {
   if (req.isAuthenticated && req.isAuthenticated()) {
     const username = req.user?.username || req.user?.displayName || "GitHub user";
@@ -68,21 +63,27 @@ app.get("/", (req, res) => {
   res.send("Logged out");
 });
 
-// Test-only public route (no DB) — PUBLIC
+// ✅ Test login shim (ONLY for Jest)
 if (process.env.NODE_ENV === "test") {
+  app.use((req, res, next) => {
+    if (req.headers["x-test-auth"] === "1") {
+      req.isAuthenticated = () => true;
+      req.user = { username: "testuser" };
+    }
+    next();
+  });
+
+  // Test-only routes
   app.get("/__test__/public", (req, res) => res.json({ ok: true }));
 }
 
-// Auth protection (ONLY ONCE)
 app.use(requireAuth);
 
-// Test-only private route (no DB) — PRIVATE
+app.use("/", require("./routes"));
+
 if (process.env.NODE_ENV === "test") {
   app.get("/__test__/private", (req, res) => res.json({ ok: true }));
 }
-
-// Routes
-app.use("/", require("./routes"));
 
 app.use(errorHandler);
 
