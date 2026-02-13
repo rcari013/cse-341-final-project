@@ -43,7 +43,7 @@ exports.createUser = async (req, res, next) => {
 
       try {
         const savedUsers = await User.insertMany(req.body, {
-          ordered: true,       // change to true so it stops and reports the first failure
+          ordered: true,
           runValidators: true
         });
 
@@ -52,7 +52,6 @@ exports.createUser = async (req, res, next) => {
           users: savedUsers
         });
       } catch (bulkErr) {
-        // This exposes exactly which document(s) failed and why
         return res.status(400).json({
           message: "Bulk insert failed",
           error: bulkErr.message,

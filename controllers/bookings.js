@@ -33,7 +33,7 @@ async function validateRefs({ userId, vehicleId, serviceId }) {
 exports.getAll = async (req, res, next) => {
   try {
     const bookings = await Booking.find()
-      .populate({ path: "userId", select: "-password" }) // ✅ hide password
+      .populate({ path: "userId", select: "-password" })
       .populate("vehicleId")
       .populate("serviceId");
 
@@ -47,7 +47,7 @@ exports.getAll = async (req, res, next) => {
 exports.getSingle = async (req, res, next) => {
   try {
     const booking = await Booking.findById(req.params.id)
-      .populate({ path: "userId", select: "-password" }) // ✅ hide password
+      .populate({ path: "userId", select: "-password" })
       .populate("vehicleId")
       .populate("serviceId");
 

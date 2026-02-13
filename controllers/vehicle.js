@@ -6,7 +6,7 @@ const User = require("../models/user");
 const getAllVehicles = async (req, res, next) => {
   try {
     const vehicles = await Vehicle.find()
-      .populate({ path: "ownerId", select: "-password" }); // optional
+      .populate({ path: "ownerId", select: "-password" });
 
     res.status(200).json(vehicles);
   } catch (err) {
@@ -18,7 +18,7 @@ const getAllVehicles = async (req, res, next) => {
 const getVehicleById = async (req, res, next) => {
   try {
     const vehicle = await Vehicle.findById(req.params.id)
-      .populate({ path: "ownerId", select: "-password" }); // optional
+      .populate({ path: "ownerId", select: "-password" });
 
     if (!vehicle) {
       return res.status(404).json({ error: "Vehicle not found." });
@@ -70,7 +70,7 @@ const createVehicle = async (req, res, next) => {
       }
 
       const savedVehicles = await Vehicle.insertMany(payload, {
-        ordered: true,       // stop at first error (set false for partial inserts)
+        ordered: true,
         runValidators: true
       });
 
