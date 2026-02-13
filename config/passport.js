@@ -17,7 +17,7 @@ const configurePassport = () => {
         clientSecret: process.env.GITHUB_CLIENT_SECRET,
         callbackURL:
           process.env.GITHUB_CALLBACK_URL ||
-          "http://localhost:3000/auth/github/callback",
+          "https://cse-341-final-project-1t9z.onrender.com/auth/github/callback",
       },
       (accessToken, refreshToken, profile, done) => done(null, profile)
     )
