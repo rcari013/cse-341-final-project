@@ -8,7 +8,6 @@
   "basePath": "/",
   "consumes": ["application/json"],
   "produces": ["application/json"],
-
   "paths": {
     "/vehicles": {
       "get": {
@@ -29,19 +28,13 @@
             "required": true,
             "schema": {
               "type": "object",
-              "required": ["make", "model", "year", "vin"],
+              "required": ["ownerId", "make", "model", "year", "vin"],
               "properties": {
+                "ownerId": { "type": "string", "example": "698ee55d80eed7c50e77e6e1" },
                 "make": { "type": "string", "example": "Toyota" },
                 "model": { "type": "string", "example": "Corolla" },
-                "year": {
-                  "type": "number",
-                  "minimum": 1886,
-                  "example": 2020
-                },
-                "vin": {
-                  "type": "string",
-                  "example": "1HGCM82633A004352"
-                },
+                "year": { "type": "number", "minimum": 1886, "example": 2020 },
+                "vin": { "type": "string", "example": "1HGCM82633A004352" },
                 "color": { "type": "string", "example": "White" },
                 "licensePlate": { "type": "string", "example": "ABC-1234" },
                 "fuelType": {
@@ -156,17 +149,10 @@
                   "minimum": 1,
                   "example": 30
                 },
-                "price": {
-                  "type": "number",
-                  "minimum": 0,
-                  "example": 49.99
-                },
+                "price": { "type": "number", "minimum": 0, "example": 49.99 },
                 "isActive": { "type": "boolean", "example": true },
                 "category": { "type": "string", "example": "Maintenance" },
-                "requiresAppointment": {
-                  "type": "boolean",
-                  "example": true
-                }
+                "requiresAppointment": { "type": "boolean", "example": true }
               }
             }
           }
@@ -235,6 +221,225 @@
           "200": { "description": "Service deleted" },
           "400": { "description": "Invalid ID format" },
           "404": { "description": "Service not found" },
+          "500": { "description": "Internal Server Error" }
+        }
+      }
+    },
+
+    "/users": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get all users",
+        "responses": {
+          "200": { "description": "Users retrieved successfully" },
+          "500": { "description": "Internal Server Error" }
+        }
+      },
+      "post": {
+        "tags": ["Users"],
+        "summary": "Create a new user",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["name", "email", "password"],
+              "properties": {
+                "name": { "type": "string", "example": "Esteban Spitale" },
+                "email": { "type": "string", "example": "esteban@email.com" },
+                "phone": { "type": "string", "example": "123456789" },
+                "address": {
+                  "type": "string",
+                  "example": "123 Main St, Rutherford College, NC"
+                },
+                "password": { "type": "string", "example": "P@ssw0rd123" },
+                "role": {
+                  "type": "string",
+                  "enum": ["admin", "customer", "staff"],
+                  "example": "customer"
+                },
+                "isActive": { "type": "boolean", "example": true }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": { "description": "User created successfully" },
+          "400": { "description": "Validation error" },
+          "409": { "description": "Duplicate key error" },
+          "500": { "description": "Internal Server Error" }
+        }
+      }
+    },
+
+    "/users/{id}": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get user by ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string" }
+        ],
+        "responses": {
+          "200": { "description": "User found" },
+          "400": { "description": "Invalid ID format" },
+          "404": { "description": "User not found" },
+          "500": { "description": "Internal Server Error" }
+        }
+      },
+      "put": {
+        "tags": ["Users"],
+        "summary": "Update user",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string" },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "email": { "type": "string" },
+                "phone": { "type": "string" },
+                "address": { "type": "string" },
+                "password": { "type": "string" },
+                "role": {
+                  "type": "string",
+                  "enum": ["admin", "customer", "staff"]
+                },
+                "isActive": { "type": "boolean" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "User updated" },
+          "400": { "description": "Validation error or invalid ID" },
+          "404": { "description": "User not found" },
+          "409": { "description": "Duplicate key error" },
+          "500": { "description": "Internal Server Error" }
+        }
+      },
+      "delete": {
+        "tags": ["Users"],
+        "summary": "Delete user",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string" }
+        ],
+        "responses": {
+          "200": { "description": "User deleted" },
+          "400": { "description": "Invalid ID format" },
+          "404": { "description": "User not found" },
+          "500": { "description": "Internal Server Error" }
+        }
+      }
+    },
+
+    "/bookings": {
+      "get": {
+        "tags": ["Bookings"],
+        "summary": "Get all bookings",
+        "responses": {
+          "200": { "description": "List of bookings" },
+          "500": { "description": "Internal Server Error" }
+        }
+      },
+      "post": {
+        "tags": ["Bookings"],
+        "summary": "Create a new booking",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["userId", "vehicleId", "serviceId"],
+              "properties": {
+                "userId": { "type": "string", "example": "65f0c2a9b1a2c3d4e5f67890" },
+                "vehicleId": { "type": "string", "example": "65f0c2a9b1a2c3d4e5f67891" },
+                "serviceId": { "type": "string", "example": "65f0c2a9b1a2c3d4e5f67892" },
+                "startDate": { "type": "string", "example": "2026-02-13" },
+                "endDate": { "type": "string", "example": "2026-02-14" },
+                "notes": { "type": "string", "example": "Customer requests morning appointment" },
+                "status": {
+                  "type": "string",
+                  "enum": ["pending", "confirmed", "cancelled", "completed"],
+                  "example": "pending"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": { "description": "Booking created" },
+          "400": { "description": "Validation error or invalid input" },
+          "409": { "description": "Duplicate key error" },
+          "500": { "description": "Internal Server Error" }
+        }
+      }
+    },
+
+    "/bookings/{id}": {
+      "get": {
+        "tags": ["Bookings"],
+        "summary": "Get booking by ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string" }
+        ],
+        "responses": {
+          "200": { "description": "Booking found" },
+          "400": { "description": "Invalid ID format" },
+          "404": { "description": "Booking not found" },
+          "500": { "description": "Internal Server Error" }
+        }
+      },
+      "put": {
+        "tags": ["Bookings"],
+        "summary": "Update a booking",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string" },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "userId": { "type": "string" },
+                "vehicleId": { "type": "string" },
+                "serviceId": { "type": "string" },
+                "startDate": { "type": "string" },
+                "endDate": { "type": "string" },
+                "notes": { "type": "string" },
+                "status": {
+                  "type": "string",
+                  "enum": ["pending", "confirmed", "cancelled", "completed"]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Booking updated" },
+          "400": { "description": "Validation error or invalid ID" },
+          "404": { "description": "Booking not found" },
+          "409": { "description": "Duplicate key error" },
+          "500": { "description": "Internal Server Error" }
+        }
+      },
+      "delete": {
+        "tags": ["Bookings"],
+        "summary": "Delete a booking",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string" }
+        ],
+        "responses": {
+          "200": { "description": "Booking deleted" },
+          "400": { "description": "Invalid ID format" },
+          "404": { "description": "Booking not found" },
           "500": { "description": "Internal Server Error" }
         }
       }
