@@ -54,15 +54,6 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use("/auth", require("./routes/auth"));
 
-// Root check (PUBLIC)
-app.get("/", (req, res) => {
-  if (req.isAuthenticated && req.isAuthenticated()) {
-    const username = req.user?.username || req.user?.displayName || "GitHub user";
-    return res.send(`You are logged in, ${username}`);
-  }
-  res.send("Logged out");
-});
-
 // ✅ Test login shim (ONLY for Jest)
 if (process.env.NODE_ENV === "test") {
   app.use((req, res, next) => {
@@ -76,6 +67,17 @@ if (process.env.NODE_ENV === "test") {
   // Test-only routes
   app.get("/__test__/public", (req, res) => res.json({ ok: true }));
 }
+
+// Root check (PUBLIC)
+app.get("/", (req, res) => {
+  if (req.isAuthenticated && req.isAuthenticated()) {
+    const username = req.user?.username || req.user?.displayName || "GitHub user";
+    return res.send(`You are logged in, ${username}`);
+  }
+  res.send("Logged out");
+});
+
+
 
 app.use(requireAuth);
 
