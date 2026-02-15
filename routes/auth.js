@@ -24,4 +24,22 @@ router.get("/logout", (req, res, next) => {
   });
 });
 
+router.get("/me", (req, res) => {
+  if (!req.isAuthenticated || !req.isAuthenticated()) {
+    return res.status(401).json({ message: "Not logged in" });
+  }
+
+  const u = req.user || {};
+  res.status(200).json({
+    message: "Current user",
+    user: {
+      id: u._id || u.id,
+      username: u.username,
+      displayName: u.displayName,
+      email: u.email,
+    },
+  });
+});
+
+
 module.exports = router;
