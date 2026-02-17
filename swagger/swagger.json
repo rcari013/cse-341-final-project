@@ -13,6 +13,13 @@
       "get": {
         "tags": ["Vehicles"],
         "summary": "Get all vehicles",
+        "parameters": [
+          { "name": "page", "in": "query", "type": "integer", "default": 1 },
+          { "name": "limit", "in": "query", "type": "integer", "default": 10 },
+          { "name": "sort", "in": "query", "type": "string", "description": "Example: year or -year" },
+          { "name": "make", "in": "query", "type": "string" },
+          { "name": "fuelType", "in": "query", "type": "string" }
+        ],
         "responses": {
           "200": { "description": "List of vehicles" },
           "500": { "description": "Internal Server Error" }
@@ -122,6 +129,13 @@
       "get": {
         "tags": ["Services"],
         "summary": "Get all services",
+        "parameters": [
+          { "name": "page", "in": "query", "type": "integer", "default": 1 },
+          { "name": "limit", "in": "query", "type": "integer", "default": 10 },
+          { "name": "sort", "in": "query", "type": "string", "description": "Example: price or -price" },
+          { "name": "category", "in": "query", "type": "string" },
+          { "name": "isActive", "in": "query", "type": "boolean" }
+        ],
         "responses": {
           "200": { "description": "List of services" },
           "500": { "description": "Internal Server Error" }
@@ -230,6 +244,13 @@
       "get": {
         "tags": ["Users"],
         "summary": "Get all users",
+        "parameters": [
+          { "name": "page", "in": "query", "type": "integer", "default": 1 },
+          { "name": "limit", "in": "query", "type": "integer", "default": 10 },
+          { "name": "sort", "in": "query", "type": "string", "description": "Example: name or -name" },
+          { "name": "role", "in": "query", "type": "string" },
+          { "name": "isActive", "in": "query", "type": "boolean" }
+        ],
         "responses": {
           "200": { "description": "Users retrieved successfully" },
           "500": { "description": "Internal Server Error" }
@@ -341,6 +362,12 @@
       "get": {
         "tags": ["Bookings"],
         "summary": "Get all bookings",
+        "parameters": [
+          { "name": "page", "in": "query", "type": "integer", "default": 1 },
+          { "name": "limit", "in": "query", "type": "integer", "default": 10 },
+          { "name": "sort", "in": "query", "type": "string", "description": "Example: startDate or -startDate" },
+          { "name": "status", "in": "query", "type": "string" }
+        ],
         "responses": {
           "200": { "description": "List of bookings" },
           "500": { "description": "Internal Server Error" }

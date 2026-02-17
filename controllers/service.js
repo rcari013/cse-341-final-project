@@ -1,10 +1,27 @@
 const Service = require('../models/service');
 
-// GET all services
+// GET all services (with pagination + filters)
 exports.getAllServices = async (req, res, next) => {
   try {
-    const services = await Service.find();
-    res.status(200).json(services);
+    const { page = 1, limit = 10, ...filters } = req.query;
+
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
+    const skip = (pageNumber - 1) * limitNumber;
+
+    const total = await Service.countDocuments(filters);
+
+    const services = await Service.find(filters)
+      .skip(skip)
+      .limit(limitNumber);
+
+    res.status(200).json({
+      total,
+      page: pageNumber,
+      totalPages: Math.ceil(total / limitNumber),
+      results: services
+    });
+
   } catch (err) {
     next(err);
   }

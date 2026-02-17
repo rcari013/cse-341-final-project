@@ -18,6 +18,7 @@ describe("Bookings GET routes", () => {
   beforeAll(async () => {
     const uri = process.env.MONGODB_URI || process.env.MONGODB_URL;
     if (!uri) throw new Error("Missing MONGODB_URI (or MONGODB_URL) in .env");
+
     await mongoose.connect(uri);
 
     const u = await User.create({
@@ -49,8 +50,10 @@ describe("Bookings GET routes", () => {
       userId,
       vehicleId,
       serviceId,
-      date: new Date(), // ✅ required by your Booking model
+      date: new Date(),
+      status: "pending"
     });
+
     bookingId = b._id.toString();
   });
 
@@ -63,14 +66,30 @@ describe("Bookings GET routes", () => {
     await mongoose.connection.close();
   });
 
-  test("GET /bookings returns 200 and an array", async () => {
-    const res = await request(app).get("/bookings");
+  // Test paginación
+  test("GET /bookings returns paginated result", async () => {
+    const res = await request(app).get("/bookings?page=1&limit=5");
+
     expect(res.statusCode).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body).toHaveProperty("total");
+    expect(res.body).toHaveProperty("page");
+    expect(res.body).toHaveProperty("totalPages");
+    expect(res.body).toHaveProperty("results");
+    expect(Array.isArray(res.body.results)).toBe(true);
   });
 
+  // Test filtro dinámico
+  test("GET /bookings supports filtering by status", async () => {
+    const res = await request(app).get("/bookings?status=pending");
+
+    expect(res.statusCode).toBe(200);
+    expect(Array.isArray(res.body.results)).toBe(true);
+  });
+
+  // Test get single
   test("GET /bookings/:id returns 200 and the booking", async () => {
     const res = await request(app).get(`/bookings/${bookingId}`);
+
     expect(res.statusCode).toBe(200);
     expect((res.body._id || res.body.id).toString()).toBe(bookingId);
     expect(res.body.userId).toBeTruthy();

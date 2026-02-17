@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-// If GETALL routes are protected, bypass auth in tests (no app changes)
+// If GET routes are protected, bypass auth in tests
 jest.mock("../middleware/requireAuth", () => (req, res, next) => next());
 
 const request = require("supertest");
@@ -36,16 +36,40 @@ describe("Users GET routes", () => {
     await mongoose.connection.close();
   });
 
-  test("GET /users returns 200 and an array", async () => {
+  test("GET /users returns 200 and paginated structure", async () => {
     const res = await request(app).get("/users");
+
     expect(res.statusCode).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
+
+    expect(res.body).toHaveProperty("total");
+    expect(res.body).toHaveProperty("page");
+    expect(res.body).toHaveProperty("totalPages");
+    expect(res.body).toHaveProperty("results");
+
+    expect(Array.isArray(res.body.results)).toBe(true);
+
+    // Security check
+    if (res.body.results.length > 0) {
+      expect(res.body.results[0]).not.toHaveProperty("password");
+    }
+  });
+
+  test("GET /users with pagination works", async () => {
+    const res = await request(app).get("/users?page=1&limit=5");
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.page).toBe(1);
+    expect(res.body.results.length).toBeLessThanOrEqual(5);
   });
 
   test("GET /users/:id returns 200 and the user", async () => {
     const res = await request(app).get(`/users/${userId}`);
+
     expect(res.statusCode).toBe(200);
     expect((res.body._id || res.body.id).toString()).toBe(userId);
     expect(res.body.email).toContain("@test.com");
+
+    // Ensure password is not exposed
+    expect(res.body).not.toHaveProperty("password");
   });
 });
