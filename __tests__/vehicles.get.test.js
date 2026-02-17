@@ -1,7 +1,6 @@
 require("dotenv").config();
 
-// If /vehicles GETALL is protected in your requireAuth middleware,
-// this makes the route accessible for testing without changing app code.
+// If routes are protected, bypass auth in tests
 jest.mock("../middleware/requireAuth", () => (req, res, next) => next());
 
 const request = require("supertest");
@@ -21,10 +20,8 @@ describe("Vehicles GET routes", () => {
     const uri = process.env.MONGODB_URI || process.env.MONGODB_URL;
     if (!uri) throw new Error("Missing MONGODB_URI (or MONGODB_URL) in .env");
 
-    // Connect to Mongo for tests (prevents buffering timeout)
     await mongoose.connect(uri);
 
-    // Create an owner user (ownerId is required)
     const u = await User.create({
       name: "Vehicle Test Owner",
       email: `veh_owner_${Date.now()}@test.com`,
@@ -33,7 +30,6 @@ describe("Vehicles GET routes", () => {
 
     userId = u._id.toString();
 
-    // Create a vehicle with unique VIN
     const v = await Vehicle.create({
       ownerId: userId,
       make: "Toyota",
@@ -49,25 +45,57 @@ describe("Vehicles GET routes", () => {
   });
 
   afterAll(async () => {
-    // cleanup (optional but keeps DB clean)
     if (vehicleId) await Vehicle.deleteOne({ _id: vehicleId });
     if (userId) await User.deleteOne({ _id: userId });
 
     await mongoose.connection.close();
   });
 
-  test("GET /vehicles returns 200 and an array", async () => {
+  test("GET /vehicles returns 200 and paginated structure", async () => {
     const res = await request(app).get("/vehicles");
+
     expect(res.statusCode).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
+
+    expect(res.body).toHaveProperty("total");
+    expect(res.body).toHaveProperty("page");
+    expect(res.body).toHaveProperty("totalPages");
+    expect(res.body).toHaveProperty("results");
+
+    expect(Array.isArray(res.body.results)).toBe(true);
+
+    if (res.body.results.length > 0) {
+      const vehicle = res.body.results[0];
+
+      // populate check
+      expect(vehicle).toHaveProperty("ownerId");
+
+      // ensure password is not exposed
+      if (vehicle.ownerId) {
+        expect(vehicle.ownerId).not.toHaveProperty("password");
+      }
+    }
+  });
+
+  test("GET /vehicles with pagination works", async () => {
+    const res = await request(app).get("/vehicles?page=1&limit=5");
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.page).toBe(1);
+    expect(res.body.results.length).toBeLessThanOrEqual(5);
   });
 
   test("GET /vehicles/:id returns 200 and the vehicle", async () => {
     const res = await request(app).get(`/vehicles/${vehicleId}`);
+
     expect(res.statusCode).toBe(200);
     expect(res.body).toBeTruthy();
     expect((res.body._id || res.body.id).toString()).toBe(vehicleId);
     expect(res.body.make).toBe("Toyota");
     expect(res.body.vin).toBeTruthy();
+
+    // populated owner should not expose password
+    if (res.body.ownerId) {
+      expect(res.body.ownerId).not.toHaveProperty("password");
+    }
   });
 });

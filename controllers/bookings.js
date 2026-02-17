@@ -29,19 +29,37 @@ async function validateRefs({ userId, vehicleId, serviceId }) {
 
 // ---------- controllers ----------
 
-// GET all bookings
+// GET all bookings (with pagination + filters)
 exports.getAll = async (req, res, next) => {
   try {
-    const bookings = await Booking.find()
+    const { page = 1, limit = 10, ...filters } = req.query;
+
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
+    const skip = (pageNumber - 1) * limitNumber;
+
+    // Count total documents (for pagination info)
+    const total = await Booking.countDocuments(filters);
+
+    const bookings = await Booking.find(filters)
       .populate({ path: "userId", select: "-password" })
       .populate("vehicleId")
-      .populate("serviceId");
+      .populate("serviceId")
+      .skip(skip)
+      .limit(limitNumber);
 
-    res.status(200).json(bookings);
+    res.status(200).json({
+      total,
+      page: pageNumber,
+      totalPages: Math.ceil(total / limitNumber),
+      results: bookings
+    });
+
   } catch (err) {
     next(err);
   }
 };
+
 
 // GET booking by ID
 exports.getSingle = async (req, res, next) => {

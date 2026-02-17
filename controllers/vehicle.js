@@ -2,17 +2,35 @@ const mongoose = require("mongoose");
 const Vehicle = require("../models/vehicle");
 const User = require("../models/user");
 
-// GET all vehicles
+// GET all vehicles (pagination + filters + sorting)
 const getAllVehicles = async (req, res, next) => {
   try {
-    const vehicles = await Vehicle.find()
-      .populate({ path: "ownerId", select: "-password" });
+    const { page = 1, limit = 10, sort = "createdAt", ...filters } = req.query;
 
-    res.status(200).json(vehicles);
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
+    const skip = (pageNumber - 1) * limitNumber;
+
+    const total = await Vehicle.countDocuments(filters);
+
+    const vehicles = await Vehicle.find(filters)
+      .populate({ path: "ownerId", select: "-password" })
+      .sort(sort)
+      .skip(skip)
+      .limit(limitNumber);
+
+    res.status(200).json({
+      total,
+      page: pageNumber,
+      totalPages: Math.ceil(total / limitNumber),
+      results: vehicles
+    });
+
   } catch (err) {
     next(err);
   }
 };
+
 
 // GET vehicle by ID
 const getVehicleById = async (req, res, next) => {

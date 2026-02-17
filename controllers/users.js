@@ -1,10 +1,29 @@
 const User = require("../models/user");
 
-// GET all users
+// GET all users (pagination + filters + sorting)
 exports.getAll = async (req, res, next) => {
   try {
-    const users = await User.find();
-    return res.status(200).json(users);
+    const { page = 1, limit = 10, sort = "createdAt", ...filters } = req.query;
+
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
+    const skip = (pageNumber - 1) * limitNumber;
+
+    const total = await User.countDocuments(filters);
+
+    const users = await User.find(filters)
+      .select("-password") 
+      .sort(sort)
+      .skip(skip)
+      .limit(limitNumber);
+
+    return res.status(200).json({
+      total,
+      page: pageNumber,
+      totalPages: Math.ceil(total / limitNumber),
+      results: users
+    });
+
   } catch (err) {
     next(err);
   }
